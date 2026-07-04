@@ -57,14 +57,27 @@ async function getLogChannel() {
 
 async function flushLogs() {
   const total = buffer.messages.length + buffer.edits.length + buffer.deletes.length;
-  if (total === 0) {
-    console.log('[Logger] flushLogs called but buffer is empty');
-    return;
-  }
 
   const logChannel = await getLogChannel();
   if (!logChannel) {
     console.error('[Logger] Cannot flush — log channel unavailable');
+    return;
+  }
+
+  if (total === 0) {
+    console.log('[Logger] Sending heartbeat');
+    const embed = new EmbedBuilder()
+      .setColor(0xFFCBF6)
+      .setTitle('💓 Heartbeat')
+      .setDescription('Bot is alive and monitoring.')
+      .setFooter({ text: new Date().toLocaleString() })
+      .setTimestamp();
+    try {
+      await logChannel.send({ embeds: [embed] });
+    } catch (err) {
+      console.error(`[Logger] Heartbeat send failed: ${err.message}`);
+    }
+    lastFlush = Date.now();
     return;
   }
 
