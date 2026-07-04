@@ -16,9 +16,9 @@ const replies = [
 
 const comebacks = [
   'u first :)', 'cry more', 'ok buddy :skull:', 'l + ratio',
-  'says you', 'touch grass', 'who asked', 'didnt ask',
+  'says you', 'shut up', 'who asked', 'didnt ask',
   'imagine being this pressed', 'your opinion has been noted and discarded :pray:',
-  'mad bc bad', 'stay mad', "you're literally typing to a bot :skull:",
+  "mate shut the fuck up", 'stay mad', "you're literally typing to a bot :skull:",
 ];
 
 module.exports = {
