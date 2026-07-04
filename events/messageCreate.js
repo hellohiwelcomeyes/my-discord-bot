@@ -10,15 +10,17 @@ const insults = [
 ];
 
 const replies = [
-  'what', 'yo', 'sup', 'hey', '...', 'busy', 'not now :)',
-  'hm?', 'yo whats up', 'sup gang',
+  'what', 'yo', 'sup', 'hey', '...', 'busy', 'not now',
+  'hm?', 'yo whats up', 'sup gang', 'what it do', 'ion know',
 ];
 
 const comebacks = [
-  'u first :)', 'cry more', 'ok buddy :skull:', 'l + ratio',
+  'u first :smirk:', 'cry more', 'ok buddy :skull:', 'l + ratio',
   'says you', 'shut up', 'who asked', 'didnt ask',
-  'imagine being this pressed', 'your opinion has been noted and discarded :pray:',
-  "mate shut the fuck up", 'stay mad', "you're literally typing to a bot :skull:",
+  'npc behavior', 'ions', 'bro your input is not needed :pray:',
+  "mate shut the fuck up", 'stay mad', "big talk for someone typing at a bot",
+  'this is not the comeback you think it is', 'side character dialogue',
+  'dawg who asked', 'cap', 'fr? no one cares',
 ];
 
 module.exports = {
