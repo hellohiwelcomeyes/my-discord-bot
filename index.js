@@ -4,6 +4,9 @@ const path = require('path');
 require('dotenv').config({ path: __dirname + '/.env' });
 const { prefix } = require('./config');
 
+const http = require('http');
+http.createServer((req, res) => res.end('ok')).listen(process.env.PORT || 3000);
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
