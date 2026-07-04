@@ -15,12 +15,21 @@ const replies = [
 ];
 
 const comebacks = [
-  'u first :smirk:', 'cry more', 'ok buddy :skull:', 'l + ratio',
-  'says you', 'shut up', 'who asked', 'didnt ask',
-  'npc behavior', 'ions', 'bro your input is not needed :pray:',
-  "mate shut the fuck up", 'stay mad', "big talk for someone typing at a bot",
-  'this is not the comeback you think it is', 'side character dialogue',
-  'dawg who asked', 'cap', 'fr? no one cares',
+  'idk then go sob',
+  'ok buddy',
+  'says you',
+  'shut up',
+  'mate i dont give 2 fucks',
+  'mate shut the fuck up',
+  'your input is not needed',
+  'all this useless talk',
+  'say you swear',
+  'lies',
+  'npc behavior',
+  'ions',
+  'y are u so mad',
+  'side character dialogue',
+  'this is not the comeback you think it is',
 ];
 
 module.exports = {
