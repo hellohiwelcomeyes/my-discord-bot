@@ -1,0 +1,24 @@
+=== Dyno Bot Automod Word List ===
+Semi-chill config — blocks slurs, hate speech, and scams only.
+Paste into Dyno Dashboard > Automod > Word Filter
+
+=== Instructions ===
+1. Go to https://dash.dyno.gg/
+2. Select your server
+3. Go to "Automod" > "Word Filter"
+4. Enable the module
+5. Paste the words below into "Filter Words" (comma-separated) or use "Filter Phrases"
+6. Set action to "Delete Message" or "Warn" with threshold 1
+
+=== Single Words (for Word Filter) ===
+nigger,nigga,niggar,nigguh,kike,kyke,spic,spick,chink,gook,wetback,beaner,coon,jigaboo,faggot,fag,dyke,tranny,troon,retard,mongoloid,spastic,spaz,nitro,robux,vbucks
+
+=== Phrases (for Filtered Phrases) ===
+free nitro,free discord nitro,claim your prize,you won a,airdrop claim,discord nitro,kill yourself,end yourself,neck yourself,self delete,white power,sieg heil,heil hitler,blood and soil,gas the jews
+
+=== Recommended Actions ===
+1. Add all single words to "Filter Words" with action: Delete Message
+2. Add all phrases to "Filtered Phrases" with action: Delete Message
+3. Set "Filter Match Type" to "Exact Match" for words, "Partial Match" for phrases
+4. Enable "Check for similar characters" (leetspeak detection)
+5. Enable "Include invites and links" if desired

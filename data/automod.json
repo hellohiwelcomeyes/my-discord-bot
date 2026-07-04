@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "words": [
+    { "word": "nigger", "severity": "timeout" },
+    { "word": "nigga", "severity": "timeout" },
+    { "word": "nigguh", "severity": "timeout" },
+    { "word": "niggar", "severity": "timeout" },
+    { "word": "kike", "severity": "timeout" },
+    { "word": "kyke", "severity": "timeout" },
+    { "word": "faggot", "severity": "timeout" },
+    { "word": "fag", "severity": "timeout" },
+    { "word": "dyke", "severity": "timeout" },
+    { "word": "tranny", "severity": "timeout" },
+    { "word": "troon", "severity": "timeout" },
+    { "word": "chink", "severity": "timeout" }
+  ]
+}
