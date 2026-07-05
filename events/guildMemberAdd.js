@@ -20,6 +20,23 @@ module.exports = {
 
     const created = Math.floor(member.user.createdTimestamp / 1000);
 
+    const logCh = client.channels.cache.get(channels.memberLog);
+    if (logCh) {
+      logCh.send({
+        embeds: [new EmbedBuilder()
+          .setColor(0xFFCBF6)
+          .setDescription(
+            '────── ✦⠂⠂୨୧ ──────\n' +
+            `ᴊᴏɪɴᴇᴅ ﹕ ${member.user.tag} (\`${member.id}\`)\n` +
+            `ᴀɢᴇ ﹕ <t:${created}:R>\n` +
+            `ᴍᴇᴍʙᴇʀꜱ ﹕ ${member.guild.memberCount}\n` +
+            '────── ୨୧⠂⠂✦ ──────'
+          )
+          .setTimestamp()
+        ]
+      }).catch(() => {});
+    }
+
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
       .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL({ size: 64 }) })

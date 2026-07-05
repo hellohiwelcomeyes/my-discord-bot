@@ -9,6 +9,23 @@ module.exports = {
 
     const duration = Math.floor((Date.now() - (member.joinedTimestamp || Date.now())) / 86400000);
 
+    const logCh = client.channels.cache.get(channels.memberLog);
+    if (logCh) {
+      logCh.send({
+        embeds: [new EmbedBuilder()
+          .setColor(0xFFCBF6)
+          .setDescription(
+            '────── ✦⠂⠂୨୧ ──────\n' +
+            `ʟᴇꜰᴛ ﹕ ${member.user.tag} (\`${member.id}\`)\n` +
+            `ᴛɪᴍᴇ ʜᴇʀᴇ ﹕ ${duration}d\n` +
+            `ᴍᴇᴍʙᴇʀꜱ ﹕ ${member.guild.memberCount}\n` +
+            '────── ୨୧⠂⠂✦ ──────'
+          )
+          .setTimestamp()
+        ]
+      }).catch(() => {});
+    }
+
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
       .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL({ size: 64 }) })
