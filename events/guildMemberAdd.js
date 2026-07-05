@@ -25,10 +25,15 @@ module.exports = {
       logCh.send({
         embeds: [new EmbedBuilder()
           .setColor(0xFFCBF6)
+          .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL({ size: 64 }) })
+          .setThumbnail(member.user.displayAvatarURL({ size: 128 }))
           .setDescription(
             '────── ✦⠂⠂୨୧ ──────\n' +
-            `ᴊᴏɪɴᴇᴅ ﹕ ${member.user.tag} (\`${member.id}\`)\n` +
-            `ᴀɢᴇ ﹕ <t:${created}:R>\n` +
+            `ᴊᴏɪɴᴇᴅ ﹕ ${member.user.tag}\n` +
+            `ɪᴅ ﹕ \`${member.id}\`\n` +
+            `ᴍᴇɴᴛɪᴏɴ ﹕ ${member}\n` +
+            `ʙᴏᴛ ﹕ ${member.user.bot ? 'ʏᴇꜱ' : 'ɴᴏ'}\n` +
+            `ᴀᴄᴄᴏᴜɴᴛ ᴀɢᴇ ﹕ <t:${created}:R>\n` +
             `ᴍᴇᴍʙᴇʀꜱ ﹕ ${member.guild.memberCount}\n` +
             '────── ୨୧⠂⠂✦ ──────'
           )
@@ -39,7 +44,6 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
-      .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL({ size: 64 }) })
       .setDescription(
         '────── ˖⁺.꒷꒦♡꒷꒦˖⁺. ──────\n' +
         '⋆. 𐙚˚࿔  ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ /ʙʟꜱᴍ  𝜗𝜚˚⋆\n\n' +
@@ -48,11 +52,6 @@ module.exports = {
         'ɢᴇᴛ ᴄᴏᴍꜰᴏʀᴛᴀʙʟᴇ!\n\n' +
         '────── ෆ˚⋆୨୧⋆˚ෆ ──────'
       )
-      .addFields(
-        { name: 'ᴀᴄᴄᴏᴜɴᴛ ᴀɢᴇ', value: `<t:${created}:R>`, inline: true },
-        { name: 'ᴍᴇᴍʙᴇʀꜱ', value: `${member.guild.memberCount}`, inline: true },
-      )
-      .setFooter({ text: 'ɪᴅ: ' + member.id })
       .setTimestamp();
 
     channel.send({ embeds: [embed] }).catch(() => {});
