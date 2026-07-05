@@ -77,4 +77,7 @@ antiraid.init(client);
 
 const automod = require('./utils/automod');
 
+const qotd = require('./utils/qotd');
+client.once('ready', () => qotd.init(client));
+
 client.login(process.env.TOKEN);
