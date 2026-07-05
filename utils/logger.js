@@ -68,8 +68,8 @@ async function flushLogs() {
     console.log('[Logger] Sending heartbeat');
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
-      .setTitle('💓 Heartbeat')
-      .setDescription('Bot is alive and monitoring.')
+      .setTitle('⁺˚⋆｡°✩ ʜᴇᴀʀᴛʙᴇᴀᴛ ✩°｡⋆˚⁺')
+      .setDescription('⋆. 𐙚˚/ʙʟꜱᴍ ɪꜱ ᴀʟɪᴠᴇ 𝜗𝜚˚⋆')
       .setFooter({ text: new Date().toLocaleString() })
       .setTimestamp();
     try {

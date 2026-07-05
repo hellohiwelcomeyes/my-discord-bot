@@ -5,7 +5,7 @@ module.exports = {
   once: true,
   async execute(client) {
     console.log(`✅ Logged in as ${client.user.tag}`);
-    client.user.setActivity('Stalking Blossom Lounge', { type: ActivityType.Watching });
+    client.user.setActivity('Stalking /blsm', { type: ActivityType.Watching });
     try {
       const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
       const { guildId } = require('../config');
