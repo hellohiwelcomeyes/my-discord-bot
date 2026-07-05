@@ -41,6 +41,10 @@ module.exports = {
         `${member.guild.memberCount} ᴍᴇᴍʙᴇʀꜱ ʀᴇᴍᴀɪɴ\n\n` +
         '────── ⋅˚₊‧୨୧‧₊˚⋅ ──────'
       )
+      .addFields(
+        { name: 'ᴛɪᴍᴇ ʜᴇʀᴇ', value: `${duration}d`, inline: true },
+        { name: 'ᴊᴏɪɴᴇᴅ', value: member.joinedTimestamp ? `<t:${Math.floor(member.joinedTimestamp / 1000)}:R>` : 'Unknown', inline: true },
+      )
       .setTimestamp();
 
     channel.send({ embeds: [embed] }).catch(() => {});
