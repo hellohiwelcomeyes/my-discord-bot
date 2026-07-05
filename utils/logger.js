@@ -85,30 +85,39 @@ async function flushLogs() {
 
   const parts = [];
 
+  const SEP = '────── ✦⠂⠂୨୧ ──────';
+  const SEP2 = '────── ୨୧⠂⠂✦ ──────';
+
   if (buffer.messages.length) {
-    let text = `New Messages — ${buffer.messages.length}\n`;
+    let text = SEP + '\n' +
+      `ᴍᴇꜱꜱᴀɢᴇꜱ (${buffer.messages.length})\n\n`;
     buffer.messages.slice(0, 20).forEach(e => {
-      text += `\n#${e.channelName || e.channelId} | ${e.author}\n${truncate(e.content, 150)}`;
+      text += `#${e.channelName || e.channelId} | ${e.author}\n${truncate(e.content, 150)}\n\n`;
     });
-    if (buffer.messages.length > 20) text += `\n\n...and ${buffer.messages.length - 20} more`;
+    if (buffer.messages.length > 20) text += `. . . ᴀɴᴅ ${buffer.messages.length - 20} ᴍᴏʀᴇ\n\n`;
+    text += SEP2;
     parts.push(text);
   }
 
   if (buffer.edits.length) {
-    let text = `Edited — ${buffer.edits.length}\n`;
+    let text = SEP + '\n' +
+      `ᴇᴅɪᴛꜱ (${buffer.edits.length})\n\n`;
     buffer.edits.slice(0, 10).forEach(e => {
-      text += `\n#${e.channelName || e.channelId} | ${e.author}\n"${truncate(e.before, 80)}" → "${truncate(e.after, 80)}"`;
+      text += `#${e.channelName || e.channelId} | ${e.author}\n${truncate(e.before, 80)} → ${truncate(e.after, 80)}\n\n`;
     });
-    if (buffer.edits.length > 10) text += `\n\n...and ${buffer.edits.length - 10} more`;
+    if (buffer.edits.length > 10) text += `. . . ᴀɴᴅ ${buffer.edits.length - 10} ᴍᴏʀᴇ\n\n`;
+    text += SEP2;
     parts.push(text);
   }
 
   if (buffer.deletes.length) {
-    let text = `Deleted — ${buffer.deletes.length}\n`;
+    let text = SEP + '\n' +
+      `ᴅᴇʟᴇᴛᴇᴅ (${buffer.deletes.length})\n\n`;
     buffer.deletes.slice(0, 10).forEach(e => {
-      text += `\n#${e.channelName || e.channelId} | ${e.author}\n${e.content ? truncate(e.content, 150) : '*uncached*'}`;
+      text += `#${e.channelName || e.channelId} | ${e.author}\n${e.content ? truncate(e.content, 150) : '*ᴜɴᴄᴀᴄʜᴇᴅ*'}\n\n`;
     });
-    if (buffer.deletes.length > 10) text += `\n\n...and ${buffer.deletes.length - 10} more`;
+    if (buffer.deletes.length > 10) text += `. . . ᴀɴᴅ ${buffer.deletes.length - 10} ᴍᴏʀᴇ\n\n`;
+    text += SEP2;
     parts.push(text);
   }
 
@@ -116,7 +125,6 @@ async function flushLogs() {
     if (!desc.trim()) continue;
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
-      .setTitle('Message Log')
       .setDescription(desc.substring(0, 4096))
       .setFooter({ text: `${new Date().toLocaleString()}` })
       .setTimestamp();
