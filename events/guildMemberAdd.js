@@ -17,15 +17,20 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
-      .setTitle('Welcome')
-      .setDescription(`${member.user.tag}`)
-      .addFields(
-        { name: 'Member', value: `${member}`, inline: true },
-        { name: 'Member Count', value: `${member.guild.memberCount}`, inline: true },
-        { name: 'Account Created', value: `<t:${created}:R>`, inline: true },
+      .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL({ size: 64 }) })
+      .setDescription(
+        '────୨ৎ────\n' +
+        '⋆. 𐙚˚࿔  ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ʙʟᴏꜱꜱᴏᴍ  𝜗𝜚˚⋆\n\n' +
+        `${member} ɪꜱ ᴛʜᴇ ${member.guild.memberCount}ᴛʜ ᴍᴇᴍʙᴇʀ\n\n` +
+        'ʀᴇᴍᴇᴍʙᴇʀ ᴛᴏ ᴠᴇʀɪꜰʏ ɪɴ <#' + channels.verify + '>\n' +
+        'ɢᴇᴛ ᴄᴏᴍꜰᴏʀᴛᴀʙʟᴇ!\n\n' +
+        '⏔⏔⏔ ꒰ ᧔ෆ᧓ ꒱ ⏔⏔⏔'
       )
-      .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
-      .setFooter({ text: `ID: ${member.id}` })
+      .addFields(
+        { name: 'ᴀᴄᴄᴏᴜɴᴛ ᴀɢᴇ', value: `<t:${created}:R>`, inline: true },
+        { name: 'ᴊᴏɪɴᴇᴅ', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true },
+      )
+      .setFooter({ text: `ɪᴅ: ${member.id}` })
       .setTimestamp();
 
     channel.send({ embeds: [embed] }).catch(() => {});

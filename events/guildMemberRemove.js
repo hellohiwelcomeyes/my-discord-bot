@@ -11,15 +11,19 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
-      .setTitle('Goodbye')
-      .setDescription(`${member.user.tag}`)
-      .addFields(
-        { name: 'Joined', value: `<t:${Math.floor((member.joinedTimestamp || Date.now()) / 1000)}:R>`, inline: true },
-        { name: 'Member Count', value: `${member.guild.memberCount}`, inline: true },
-        { name: 'Duration', value: `${duration}d in the server`, inline: true },
+      .setAuthor({ name: member.user.tag, iconURL: member.user.displayAvatarURL({ size: 64 }) })
+      .setDescription(
+        '────୨ৎ────\n' +
+        '⋆. 𐙚˚࿔  ɢᴏᴏᴅʙʏᴇ  𝜗𝜚˚⋆\n\n' +
+        `${member.user.username} ʜᴀꜱ ʟᴇꜰᴛ\n` +
+        `${member.guild.memberCount} ᴍᴇᴍʙᴇʀꜱ ʀᴇᴍᴀɪɴ\n\n` +
+        '⏔⏔⏔ ꒰ ᧔ෆ᧓ ꒱ ⏔⏔⏔'
       )
-      .setThumbnail(member.user.displayAvatarURL({ size: 256 }))
-      .setFooter({ text: `ID: ${member.id}` })
+      .addFields(
+        { name: 'ᴛɪᴍᴇ ʜᴇʀᴇ', value: `${duration}d`, inline: true },
+        { name: 'ᴊᴏɪɴᴇᴅ', value: member.joinedTimestamp ? `<t:${Math.floor(member.joinedTimestamp / 1000)}:R>` : 'Unknown', inline: true },
+      )
+      .setFooter({ text: `ɪᴅ: ${member.id}` })
       .setTimestamp();
 
     channel.send({ embeds: [embed] }).catch(() => {});

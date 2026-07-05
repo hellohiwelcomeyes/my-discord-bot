@@ -2,6 +2,18 @@ const { EmbedBuilder } = require('discord.js');
 const rr = require('../../utils/reactionroles');
 const { isMod, noPermPrefix } = require('../../utils/permissions');
 
+function buildPanelEmbed(roles, guild) {
+  const desc = Object.entries(roles).length
+    ? Object.entries(roles).map(([e, r]) => `${e} → <@&${r}>`).join('\n')
+    : 'No roles set up yet.';
+  return new EmbedBuilder()
+    .setColor(0xFFCBF6)
+    .setTitle('Reaction Roles')
+    .setDescription(desc)
+    .setFooter({ text: 'React to get the role above' })
+    .setTimestamp();
+}
+
 module.exports = {
   name: 'reactionrole',
   async executePrefix(message, args) {
@@ -9,64 +21,66 @@ module.exports = {
 
     const sub = (args[0] || '').toLowerCase();
 
-    if (sub === 'create') {
-      const embed = new EmbedBuilder()
-        .setColor(0xFFCBF6)
-        .setTitle('Reaction Roles')
-        .setDescription('React to get roles!')
-        .setTimestamp();
-
-      const msg = await message.channel.send({ embeds: [embed] });
-      await message.delete().catch(() => {});
-
-      rr.setPanel(msg.id, { channelId: msg.channel.id, guildId: msg.guild.id, roles: {} });
-
-      return msg.reply(`Panel created. Use \`reactionrole add :emoji: @role\``);
-    }
-
-    if (sub === 'add') {
-      const panelEntries = Object.entries(rr.getAll());
-      if (!panelEntries.length) return message.reply('Create a panel first with `reactionrole create`');
-
-      const targetMsgId = args[args.length - 1].match(/^\d+$/) ? args.pop() : null;
+    if (sub === 'add' || (!sub && message.mentions.roles.size)) {
       const role = message.mentions.roles.first();
-      const emoji = args.slice(1, args.indexOf(`<@&${role?.id}>`) > 0 ? args.indexOf(`<@&${role.id}>`) : args.length).filter(a => !a.startsWith('<@&'))[0];
-      if (!emoji || !role) return message.reply('Usage: `reactionrole add :emoji: @role [msgId]`');
+      const emoji = args[0]?.startsWith('<') ? null : args[0];
+      const cleanEmoji = emoji || args[1 === (message.mentions.roles.first() ? 0 : 1)] || args[0];
+      if (!role) return message.reply('Usage: `!areactionrole add :emoji: @role`');
 
-      const messageId = targetMsgId || panelEntries[0][0];
-      const panel = rr.getPanel(messageId);
-      if (!panel) return message.reply('Panel not found.');
+      const allPanels = rr.getAll();
+      const existing = Object.entries(allPanels).find(([, p]) => p.guildId === message.guild.id);
 
-      const emojiKey = role;
-      // just grab actual emoji from the message
-      const cleanEmoji = emoji.replace(/[<:>]/g, '').split(':')[0] || emoji;
-      panel.roles[cleanEmoji] = role.id;
-      rr.setPanel(messageId, panel);
-
-      try {
+      let msg;
+      if (existing) {
+        const [msgId, panel] = existing;
         const channel = message.guild.channels.cache.get(panel.channelId);
-        if (channel) {
-          const msg = await channel.messages.fetch(messageId);
-          await msg.react(cleanEmoji);
-        }
-      } catch {}
+        if (channel) msg = await channel.messages.fetch(msgId).catch(() => null);
+      }
 
+      if (!msg) {
+        const embed = buildPanelEmbed({}, message.guild);
+        msg = await message.channel.send({ embeds: [embed] });
+        rr.setPanel(msg.id, { channelId: msg.channel.id, guildId: message.guild.id, roles: {} });
+      }
+
+      const panel = rr.getPanel(msg.id);
+      const actualEmoji = cleanEmoji || args[1];
+      panel.roles[actualEmoji] = role.id;
+      rr.setPanel(msg.id, panel);
+
+      try { await msg.react(actualEmoji); } catch {}
+
+      await msg.edit({ embeds: [buildPanelEmbed(panel.roles, message.guild)] });
       await message.delete().catch(() => {});
-      const reply = await message.channel.send(`Added ${cleanEmoji} -> ${role}.`);
+      const reply = await message.channel.send(`Added ${actualEmoji} → ${role}`);
       return setTimeout(() => reply.delete().catch(() => {}), 3000);
     }
 
     if (sub === 'remove') {
       const emoji = args[1];
-      const messageId = args[2];
-      if (!emoji || !messageId) return message.reply('Usage: `reactionrole remove :emoji: <msgId>`');
+      if (!emoji) return message.reply('Usage: `!areactionrole remove :emoji:`');
 
-      const panel = rr.getPanel(messageId);
-      if (!panel || !panel.roles[emoji]) return message.reply('not found');
+      const allPanels = rr.getAll();
+      const existing = Object.entries(allPanels).find(([, p]) => p.guildId === message.guild.id);
+      if (!existing) return message.reply('No panel found for this server.');
+
+      const [msgId, panel] = existing;
+      if (!panel.roles[emoji]) return message.reply('That emoji is not in the panel.');
 
       delete panel.roles[emoji];
-      rr.setPanel(messageId, panel);
-      return message.reply(`removed ${emoji}`);
+      rr.setPanel(msgId, panel);
+
+      const channel = message.guild.channels.cache.get(panel.channelId);
+      if (channel) {
+        const msg = await channel.messages.fetch(msgId).catch(() => null);
+        if (msg) {
+          const reaction = msg.reactions.cache.find(r => (r.emoji.name || r.emoji.id) === emoji);
+          if (reaction) await reaction.remove().catch(() => {});
+          await msg.edit({ embeds: [buildPanelEmbed(panel.roles, message.guild)] });
+        }
+      }
+
+      return message.reply(`Removed ${emoji}`);
     }
 
     if (sub === 'list') {
@@ -75,13 +89,13 @@ module.exports = {
       if (!entries.length) return message.reply('no panels');
 
       const lines = entries.map(([id, p]) => {
-        const roles = Object.entries(p.roles).map(([e, r]) => `  ${e} -> <@&${r}>`).join('\n');
+        const roles = Object.entries(p.roles).map(([e, r]) => `  ${e} → <@&${r}>`).join('\n');
         return `**Panel:** ${id}\n${roles || '  no roles'}`;
       });
 
       return message.channel.send(lines.join('\n\n'));
     }
 
-    message.reply('`!areactionrole create | add :emoji: @role [msgId] | remove :emoji: <msgId> | list`');
+    message.reply('`!areactionrole add :emoji: @role | remove :emoji: | list`');
   },
 };

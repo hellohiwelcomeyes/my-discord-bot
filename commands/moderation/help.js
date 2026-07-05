@@ -7,18 +7,16 @@ module.exports = {
       .setColor(0xFFCBF6)
       .setTitle('Commands')
       .setDescription(
-        '```\n' +
-        '8ball <q>       ask the 8-ball\n' +
-        'avatar [@u]     see avatar\n' +
-        'coinflip        flip a coin\n' +
-        'roll [XdY]      roll dice\n' +
-        'serverinfo      server stats\n' +
-        'userinfo [@u]   user details\n' +
-        'botinfo         bot system info\n' +
-        'remind <t> <t>  reminder DMs you\n' +
-        's               snipe last deleted msg\n' +
-        'ticket          open support ticket\n' +
-        '```'
+        '`!a8ball <q>` — ask the 8-ball\n' +
+        '`!aavatar [@u]` — see avatar\n' +
+        '`!acoinflip` — flip a coin\n' +
+        '`!aroll [XdY]` — roll dice\n' +
+        '`!aserverinfo` — server stats\n' +
+        '`!auserinfo [@u]` — user details\n' +
+        '`!abotinfo` — bot system info\n' +
+        '`!aremind 30m <text>` — reminder DMs you\n' +
+        '`!as` — snipe last deleted msg\n' +
+        '`!aticket` — open support ticket'
       )
       .setFooter({ text: 'Prefix: !a' })
       .setTimestamp();

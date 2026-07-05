@@ -1,12 +1,16 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const os = require('os');
 
-const LEAF = [
-  '     .--.',
-  '    / .  \\',
-  '   /      \\',
-  '  /________\\',
-].join('\n');
+const LEAF = '```\n' +
+'      .--.\n' +
+'     /    \\\n' +
+'    /  o   \\\n' +
+'   /        \\\n' +
+'  /     o    \\\n' +
+' /____________\\\n' +
+'       ||\n' +
+'       ||\n' +
+'```';
 
 function formatUptime(ms) {
   const d = Math.floor(ms / 86400000);
@@ -31,12 +35,11 @@ module.exports = {
     const ping = Math.round(c.ws.ping);
     const users = c.guilds.cache.reduce((a, g) => a + g.memberCount, 0);
 
-    const output = '```\n' + LEAF + '\n\n' +
+    const output = LEAF + '\n' +
       '  uptime     ' + uptime + '\n' +
       '  users      ' + users + '\n' +
       '  ping       ' + ping + 'ms\n' +
-      '  os         Linux LFS (btw)\n' +
-      '```';
+      '  os         Linux LFS (btw)\n';
 
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
@@ -52,12 +55,11 @@ module.exports = {
     const ping = Math.round(c.ws.ping);
     const users = c.guilds.cache.reduce((a, g) => a + g.memberCount, 0);
 
-    const output = '```\n' + LEAF + '\n\n' +
+    const output = LEAF + '\n' +
       '  uptime     ' + uptime + '\n' +
       '  users      ' + users + '\n' +
       '  ping       ' + ping + 'ms\n' +
-      '  os         Linux LFS (btw)\n' +
-      '```';
+      '  os         Linux LFS (btw)\n';
 
     const embed = new EmbedBuilder()
       .setColor(0xFFCBF6)
