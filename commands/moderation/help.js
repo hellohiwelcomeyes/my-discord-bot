@@ -8,13 +8,16 @@ module.exports = {
       .setTitle('Commands')
       .setDescription('All commands:')
       .addFields(
-        { name: '🎱 `!a8ball <question>`', value: 'Ask the 8-ball anything', inline: false },
-        { name: '🖼️ `!aavatar [@user]`', value: "See someone's avatar", inline: false },
-        { name: '🪙 `!acoinflip`', value: 'Flip a coin', inline: false },
-        { name: '🎲 `!aroll [dice]`', value: 'Roll some dice', inline: false },
-        { name: '🏠 `!aserverinfo`', value: 'Server stats', inline: false },
-        { name: '👤 `!auserinfo [@user]`', value: 'User details', inline: false },
-        { name: '🎫 `!aticket`', value: 'Open a support ticket', inline: false },
+        { name: '🎱 `!a8ball <q>`', value: 'ask the 8-ball', inline: true },
+        { name: '🖼️ `!aavatar [@u]`', value: 'see avatar', inline: true },
+        { name: '🪙 `!acoinflip`', value: 'flip a coin', inline: true },
+        { name: '🎲 `!aroll [XdY]`', value: 'roll dice', inline: true },
+        { name: '🏠 `!aserverinfo`', value: 'server stats', inline: true },
+        { name: '👤 `!auserinfo [@u]`', value: 'user details', inline: true },
+        { name: '🤖 `!abotinfo`', value: 'bot system info', inline: true },
+        { name: '🔔 `!aremind 30m <text>`', value: 'reminder DMs you', inline: true },
+        { name: '👻 `!as`', value: 'snipe last deleted msg', inline: true },
+        { name: '🎫 `!aticket`', value: 'open support ticket', inline: true },
       )
       .setFooter({ text: `Prefix: !a` })
       .setTimestamp();
