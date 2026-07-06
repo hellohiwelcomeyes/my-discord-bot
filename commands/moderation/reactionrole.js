@@ -145,7 +145,7 @@ module.exports = {
     const sub = (args[0] || '').toLowerCase();
     const all = rr.getAll();
 
-    if (sub === 'panel') {
+    if (sub === 'panel' || sub === 'create') {
       const title = args.slice(1).join(' ') || 'Roles';
       const data = { title, roles: {}, color: 'FFCBF6', guildId: message.guild.id, channelId: message.channel.id };
       const embed = buildEmbed(data);
@@ -227,7 +227,7 @@ module.exports = {
     }
 
     message.reply(
-      '`!areactionrole panel <title>` — create button panel\n' +
+      '`!areactionrole panel <title>` or `!areactionrole create <title>` — create button panel\n' +
       '`!areactionrole add :emoji: @role [panel_id]` — add role\n' +
       '`!areactionrole remove :emoji: [panel_id]` — remove role\n' +
       '`!areactionrole color <hex> [panel_id]` — set color\n' +

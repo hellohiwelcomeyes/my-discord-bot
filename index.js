@@ -78,6 +78,9 @@ antiraid.init(client);
 const automod = require('./utils/automod');
 
 const qotd = require('./utils/qotd');
-client.once('ready', () => qotd.init(client));
+client.once('ready', () => {
+  qotd.init(client);
+  console.log('✅ QOTD scheduler started');
+});
 
 client.login(process.env.TOKEN);
