@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const welcomeEvent = require('../../events/guildMemberAdd');
 const goodbyeEvent = require('../../events/guildMemberRemove');
+const { isMod, noPermSlash, noPermPrefix } = require('../../utils/permissions');
 
 module.exports = {
   name: 'test',
@@ -11,6 +12,7 @@ module.exports = {
     .addSubcommand(s => s.setName('goodbye').setDescription('Test goodbye embed').addUserOption(o => o.setName('user').setDescription('User to test with'))),
 
   async execute(interaction) {
+    if (!(await isMod(interaction.member))) return noPermSlash(interaction);
     const sub = interaction.options.getSubcommand();
     const target = interaction.options.getUser('user') || interaction.user;
     const member = await interaction.guild.members.fetch(target.id).catch(() => null);
@@ -26,6 +28,7 @@ module.exports = {
   },
 
   async executePrefix(message, args) {
+    if (!(await isMod(message.member))) return noPermPrefix(message);
     const sub = args[0];
     if (!sub || !['welcome', 'goodbye'].includes(sub)) {
       return message.reply('usage: `!atest welcome [@user]` or `!atest goodbye [@user]`');
