@@ -5,17 +5,17 @@ const { isMod, noPermSlash, noPermPrefix } = require('../../utils/permissions');
 function buildEmbed(panel) {
   const entries = Object.entries(panel.roles || {});
   const lines = entries.map(([e, r]) => `${e}  <@&${r}>`);
-  let desc = '✧ ˚ .  ꒷꒦ ' + (panel.title || 'roles') + ' ꒷꒦  . ˚ ✧\n\n';
+  let desc = '❀ ˚ .  𓇢𓆸 ' + (panel.title || 'roles') + ' 𓆸𓇢  . ˚ ❀\n\n';
   if (lines.length) {
     desc += lines.join('\n');
   } else {
     desc += '‧₊ ⊹ _no roles yet_ ⊹ ₊‧';
   }
-  desc += '\n\n‧₊ ⊹ click a button below ⊹ ₊‧';
+  desc += '\n\n‧₊ ⊹ ༺ click a button ༻ ⊹ ₊‧';
   return new EmbedBuilder()
     .setColor(parseInt(panel.color || 'FFCBF6', 16))
     .setDescription(desc)
-    .setFooter({ text: 'toggle roles' })
+    .setFooter({ text: '𓇢𓆸 toggle 𓆸𓇢' })
     .setTimestamp();
 }
 
