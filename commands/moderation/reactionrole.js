@@ -49,6 +49,7 @@ module.exports = {
     .addSubcommand(s => s.setName('remove').setDescription('Remove a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('color').setDescription('Set panel color').addStringOption(o => o.setName('hex').setDescription('Hex color').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('list').setDescription('List all panels'))
+    .addSubcommand(s => s.setName('edit').setDescription('Edit panel title or image').addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(true)).addStringOption(o => o.setName('title').setDescription('New title').setRequired(false)).addAttachmentOption(o => o.setName('image').setDescription('New image or gif').setRequired(false)).addBooleanOption(o => o.setName('clear_image').setDescription('Remove the image').setRequired(false)))
     .addSubcommand(s => s.setName('delete').setDescription('Delete a role panel').addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(true))),
 
   async execute(interaction) {
@@ -141,6 +142,29 @@ module.exports = {
         content: entries.map(([id, p]) => `\`${id}\` **${p.title}** (${Object.keys(p.roles).length} roles)`).join('\n'),
         ephemeral: true,
       });
+    }
+
+    if (sub === 'edit') {
+      const targetId = interaction.options.getString('panel');
+      const panel = all[targetId];
+      if (!panel || panel.guildId !== interaction.guild.id)
+        return interaction.reply({ content: 'panel not found', ephemeral: true });
+
+      const title = interaction.options.getString('title');
+      const imageAttachment = interaction.options.getAttachment('image');
+      const clearImage = interaction.options.getBoolean('clear_image');
+
+      if (title !== null) panel.title = title;
+      if (imageAttachment) panel.image = imageAttachment.url;
+      if (clearImage) delete panel.image;
+
+      rr.setPanel(targetId, panel);
+      const ch = interaction.guild.channels.cache.get(panel.channelId);
+      if (ch) {
+        const msg = await ch.messages.fetch(targetId).catch(() => null);
+        if (msg) msg.edit({ embeds: [buildEmbed(panel)], components: buildRows(panel, targetId) }).catch(() => {});
+      }
+      return interaction.reply({ content: 'panel updated', ephemeral: true });
     }
 
     if (sub === 'delete') {
@@ -264,6 +288,27 @@ module.exports = {
       return message.channel.send(entries.map(([id, p]) => `\`${id}\` **${p.title}** (${Object.keys(p.roles).length} roles)`).join('\n'));
     }
 
+    if (sub === 'edit') {
+      const targetId = args[1];
+      if (!targetId) return message.reply('usage: `!areactionrole edit <panel_id> [new_title]`');
+      const panel = all[targetId];
+      if (!panel || panel.guildId !== message.guild.id) return message.reply('panel not found');
+
+      const newTitle = args.slice(2).join(' ');
+      if (newTitle) panel.title = newTitle;
+      const attach = message.attachments.first();
+      if (attach) panel.image = attach.url;
+      if (args.includes('--remove-image')) delete panel.image;
+
+      rr.setPanel(targetId, panel);
+      const ch = message.guild.channels.cache.get(panel.channelId);
+      if (ch) {
+        const msg = await ch.messages.fetch(targetId).catch(() => null);
+        if (msg) msg.edit({ embeds: [buildEmbed(panel)], components: buildRows(panel, targetId) }).catch(() => {});
+      }
+      return message.reply('panel updated');
+    }
+
     if (sub === 'delete') {
       const targetId = args[1];
       if (!targetId) return message.reply('usage: `!areactionrole delete <panel_id>`');
@@ -281,6 +326,7 @@ module.exports = {
     message.reply(
       '`!areactionrole panel <title>` — create button panel (attach image for panel image)\n' +
       '`!areactionrole add :emoji: @role ... [panel_id]` — add role(s) (attach image for panel image)\n' +
+      '`!areactionrole edit <panel_id> [new_title]` — edit title/image (attach image, --remove-image)\n' +
       '`!areactionrole remove :emoji: [panel_id]` — remove role\n' +
       '`!areactionrole color <hex> [panel_id]` — set color\n' +
       '`!areactionrole delete <panel_id>` — delete panel\n' +
