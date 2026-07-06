@@ -11,10 +11,10 @@ function buildEmbed(panel) {
   } else {
     desc += '‧₊ ⊹ _no roles yet_ ⊹ ₊‧';
   }
-  desc += '\n\n**Click to assign**';
   const embed = new EmbedBuilder()
     .setColor(parseInt(panel.color || 'FFCBF6', 16))
-    .setDescription(desc);
+    .setDescription(desc)
+    .setFooter({ text: 'Click to assign' });
   if (panel.image) embed.setImage(panel.image);
   return embed;
 }
