@@ -11,12 +11,10 @@ function buildEmbed(panel) {
   } else {
     desc += '‧₊ ⊹ _no roles yet_ ⊹ ₊‧';
   }
-  desc += '\n\n‧₊ ⊹ ༺ click a button ༻ ⊹ ₊‧';
+  desc += '\n\n**Click to assign**';
   return new EmbedBuilder()
     .setColor(parseInt(panel.color || 'FFCBF6', 16))
-    .setDescription(desc)
-    .setFooter({ text: '𓇢𓆸 toggle 𓆸𓇢' })
-    .setTimestamp();
+    .setDescription(desc);
 }
 
 function buildRows(panel, msgId) {
@@ -45,11 +43,11 @@ module.exports = {
     .setName('reactionrole')
     .setDescription('Manage role panels')
     .addSubcommand(s => s.setName('panel').setDescription('Create a role panel').addStringOption(o => o.setName('title').setDescription('Panel title').setRequired(false)))
-    .addSubcommand(s => s.setName('create').setDescription('Create a role panel').addStringOption(o => o.setName('title').setDescription('Panel title').setRequired(false)))
     .addSubcommand(s => s.setName('add').setDescription('Add a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addRoleOption(o => o.setName('role').setDescription('Role').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('remove').setDescription('Remove a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('color').setDescription('Set panel color').addStringOption(o => o.setName('hex').setDescription('Hex color').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
-    .addSubcommand(s => s.setName('list').setDescription('List all panels')),
+    .addSubcommand(s => s.setName('list').setDescription('List all panels'))
+    .addSubcommand(s => s.setName('delete').setDescription('Delete a role panel').addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(true))),
 
   async execute(interaction) {
     if (!(await isMod(interaction.member))) return noPermSlash(interaction);
@@ -57,7 +55,7 @@ module.exports = {
     const sub = interaction.options.getSubcommand();
     const all = rr.getAll();
 
-    if (sub === 'panel' || sub === 'create') {
+    if (sub === 'panel') {
       const title = interaction.options.getString('title') || 'Roles';
       const data = { title, roles: {}, color: 'FFCBF6', guildId: interaction.guild.id, channelId: interaction.channel.id };
       const embed = buildEmbed(data);
@@ -137,6 +135,20 @@ module.exports = {
         content: entries.map(([id, p]) => `\`${id}\` **${p.title}** (${Object.keys(p.roles).length} roles)`).join('\n'),
         ephemeral: true,
       });
+    }
+
+    if (sub === 'delete') {
+      const targetId = interaction.options.getString('panel');
+      const panel = all[targetId];
+      if (!panel || panel.guildId !== interaction.guild.id)
+        return interaction.reply({ content: 'panel not found', ephemeral: true });
+      const ch = interaction.guild.channels.cache.get(panel.channelId);
+      if (ch) {
+        const msg = await ch.messages.fetch(targetId).catch(() => null);
+        if (msg) await msg.delete().catch(() => {});
+      }
+      rr.deletePanel(targetId);
+      return interaction.reply({ content: 'panel deleted', ephemeral: true });
     }
   },
 
@@ -227,11 +239,26 @@ module.exports = {
       return message.channel.send(entries.map(([id, p]) => `\`${id}\` **${p.title}** (${Object.keys(p.roles).length} roles)`).join('\n'));
     }
 
+    if (sub === 'delete') {
+      const targetId = args[1];
+      if (!targetId) return message.reply('usage: `!areactionrole delete <panel_id>`');
+      const panel = all[targetId];
+      if (!panel || panel.guildId !== message.guild.id) return message.reply('panel not found');
+      const ch = message.guild.channels.cache.get(panel.channelId);
+      if (ch) {
+        const msg = await ch.messages.fetch(targetId).catch(() => null);
+        if (msg) await msg.delete().catch(() => {});
+      }
+      rr.deletePanel(targetId);
+      return message.reply('panel deleted');
+    }
+
     message.reply(
-      '`!areactionrole panel <title>` or `!areactionrole create <title>` — create button panel\n' +
+      '`!areactionrole panel <title>` — create button panel\n' +
       '`!areactionrole add :emoji: @role [panel_id]` — add role\n' +
       '`!areactionrole remove :emoji: [panel_id]` — remove role\n' +
       '`!areactionrole color <hex> [panel_id]` — set color\n' +
+      '`!areactionrole delete <panel_id>` — delete panel\n' +
       '`!areactionrole list` — list panels'
     );
   },
