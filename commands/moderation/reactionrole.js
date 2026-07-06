@@ -45,6 +45,7 @@ module.exports = {
     .setName('reactionrole')
     .setDescription('Manage role panels')
     .addSubcommand(s => s.setName('panel').setDescription('Create a role panel').addStringOption(o => o.setName('title').setDescription('Panel title').setRequired(false)))
+    .addSubcommand(s => s.setName('create').setDescription('Create a role panel').addStringOption(o => o.setName('title').setDescription('Panel title').setRequired(false)))
     .addSubcommand(s => s.setName('add').setDescription('Add a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addRoleOption(o => o.setName('role').setDescription('Role').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('remove').setDescription('Remove a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('color').setDescription('Set panel color').addStringOption(o => o.setName('hex').setDescription('Hex color').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
@@ -56,7 +57,7 @@ module.exports = {
     const sub = interaction.options.getSubcommand();
     const all = rr.getAll();
 
-    if (sub === 'panel') {
+    if (sub === 'panel' || sub === 'create') {
       const title = interaction.options.getString('title') || 'Roles';
       const data = { title, roles: {}, color: 'FFCBF6', guildId: interaction.guild.id, channelId: interaction.channel.id };
       const embed = buildEmbed(data);
