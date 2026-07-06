@@ -44,7 +44,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('reactionrole')
     .setDescription('Manage role panels')
-    .addSubcommand(s => s.setName('panel').setDescription('Create a role panel').addStringOption(o => o.setName('title').setDescription('Panel title').setRequired(false)))
+    .addSubcommand(s => s.setName('panel').setDescription('Create a role panel').addStringOption(o => o.setName('title').setDescription('Panel title').setRequired(false)).addAttachmentOption(o => o.setName('image').setDescription('Image or gif for the panel').setRequired(false)))
     .addSubcommand(s => s.setName('add').setDescription('Add a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addRoleOption(o => o.setName('role').setDescription('Role').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)).addAttachmentOption(o => o.setName('image').setDescription('Image or gif for the panel').setRequired(false)))
     .addSubcommand(s => s.setName('remove').setDescription('Remove a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('color').setDescription('Set panel color').addStringOption(o => o.setName('hex').setDescription('Hex color').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
@@ -59,7 +59,9 @@ module.exports = {
 
     if (sub === 'panel') {
       const title = interaction.options.getString('title') || 'Roles';
+      const imageAttachment = interaction.options.getAttachment('image');
       const data = { title, roles: {}, color: 'FFCBF6', guildId: interaction.guild.id, channelId: interaction.channel.id };
+      if (imageAttachment) data.image = imageAttachment.url;
       const embed = buildEmbed(data);
       const rows = buildRows(data, 'temp');
       const msg = await interaction.channel.send({ embeds: [embed], components: rows });
@@ -166,6 +168,8 @@ module.exports = {
     if (sub === 'panel' || sub === 'create') {
       const title = args.slice(1).join(' ') || 'Roles';
       const data = { title, roles: {}, color: 'FFCBF6', guildId: message.guild.id, channelId: message.channel.id };
+      const attach = message.attachments.first();
+      if (attach) data.image = attach.url;
       const embed = buildEmbed(data);
       const rows = buildRows(data, 'temp');
       const msg = await message.channel.send({ embeds: [embed], components: rows });
@@ -178,10 +182,21 @@ module.exports = {
     }
 
     if (sub === 'add') {
-      const emoji = args[1];
-      const role = message.mentions.roles.first();
-      if (!emoji || !role) return message.reply('usage: `!areactionrole add :emoji: @role [panel_id]`');
-      const targetId = args[3] || null;
+      const tokens = args.slice(1);
+      const pairs = [];
+      let targetId = null;
+
+      for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i].startsWith('<@&')) {
+          if (i === 0) return message.reply('usage: `!areactionrole add :emoji: @role :emoji2: @role2 ... [panel_id]`');
+          pairs.push({ emoji: tokens[i - 1], roleId: tokens[i].slice(3, -1) });
+        }
+      }
+
+      const remaining = tokens.length - pairs.length * 2;
+      if (remaining === 1) targetId = tokens[tokens.length - 1];
+
+      if (!pairs.length) return message.reply('usage: `!areactionrole add :emoji: @role :emoji2: @role2 ... [panel_id]`');
 
       const panels = Object.entries(all).filter(([id, p]) =>
         p.guildId === message.guild.id && (!targetId || id === targetId)
@@ -189,7 +204,9 @@ module.exports = {
       if (!panels.length) return message.reply('no panels');
 
       for (const [msgId, panel] of panels) {
-        panel.roles[emoji] = role.id;
+        for (const { emoji, roleId } of pairs) {
+          panel.roles[emoji] = roleId;
+        }
         const attach = message.attachments.first();
         if (attach) panel.image = attach.url;
         rr.setPanel(msgId, panel);
@@ -200,7 +217,8 @@ module.exports = {
         }
       }
       await message.delete().catch(() => {});
-      return message.channel.send(`added ${emoji} → ${role}`).then(m => setTimeout(() => m.delete().catch(() => {}), 3000));
+      const added = pairs.map(p => `${p.emoji} → <@&${p.roleId}>`).join(', ');
+      return message.channel.send(`added ${added}`).then(m => setTimeout(() => m.delete().catch(() => {}), 3000));
     }
 
     if (sub === 'remove') {
@@ -261,8 +279,8 @@ module.exports = {
     }
 
     message.reply(
-      '`!areactionrole panel <title>` — create button panel\n' +
-      '`!areactionrole add :emoji: @role [panel_id]` — add role (attach image to set panel image)\n' +
+      '`!areactionrole panel <title>` — create button panel (attach image for panel image)\n' +
+      '`!areactionrole add :emoji: @role ... [panel_id]` — add role(s) (attach image for panel image)\n' +
       '`!areactionrole remove :emoji: [panel_id]` — remove role\n' +
       '`!areactionrole color <hex> [panel_id]` — set color\n' +
       '`!areactionrole delete <panel_id>` — delete panel\n' +
