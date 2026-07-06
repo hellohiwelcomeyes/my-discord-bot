@@ -25,7 +25,7 @@ module.exports = {
         const parts = interaction.customId.split('_');
         const msgId = parts[1];
         const roleId = parts.slice(2).join('_');
-        const panel = rr.getPanel(msgId);
+        const panel = await rr.getPanel(msgId);
         if (!panel) return interaction.reply({ content: 'panel not found', ephemeral: true });
 
         const member = await interaction.guild.members.fetch(interaction.user.id).catch(() => null);

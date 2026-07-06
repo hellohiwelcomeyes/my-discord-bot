@@ -69,6 +69,9 @@ client.on('messageCreate', async message => {
   }
 });
 
+const gist = require('./utils/giststore');
+gist.init();
+
 const logger = require('./utils/logger');
 logger.init(client);
 

@@ -56,7 +56,7 @@ module.exports = {
     if (!(await isMod(interaction.member))) return noPermSlash(interaction);
 
     const sub = interaction.options.getSubcommand();
-    const all = rr.getAll();
+    const all = await rr.getAll();
 
     if (sub === 'panel') {
       const title = interaction.options.getString('title') || 'Roles';
@@ -67,7 +67,7 @@ module.exports = {
       const rows = buildRows(data, 'temp');
       const msg = await interaction.channel.send({ embeds: [embed], components: rows });
       data.channelId = msg.channel.id;
-      rr.setPanel(msg.id, data);
+      await rr.setPanel(msg.id, data);
       const realRows = buildRows(data, msg.id);
       await msg.edit({ components: realRows }).catch(() => {});
       return interaction.reply({ content: `panel created`, ephemeral: true });
@@ -87,7 +87,7 @@ module.exports = {
       for (const [msgId, panel] of panels) {
         panel.roles[emoji] = role.id;
         if (imageAttachment) panel.image = imageAttachment.url;
-        rr.setPanel(msgId, panel);
+        await rr.setPanel(msgId, panel);
         const ch = interaction.guild.channels.cache.get(panel.channelId);
         if (ch) {
           const msg = await ch.messages.fetch(msgId).catch(() => null);
@@ -107,7 +107,7 @@ module.exports = {
         if (targetId && msgId !== targetId) continue;
         if (!panel.roles[emoji]) continue;
         delete panel.roles[emoji];
-        rr.setPanel(msgId, panel);
+        await rr.setPanel(msgId, panel);
         const ch = interaction.guild.channels.cache.get(panel.channelId);
         if (ch) {
           const msg = await ch.messages.fetch(msgId).catch(() => null);
@@ -125,7 +125,7 @@ module.exports = {
         if (panel.guildId !== interaction.guild.id) continue;
         if (targetId && msgId !== targetId) continue;
         panel.color = color;
-        rr.setPanel(msgId, panel);
+        await rr.setPanel(msgId, panel);
         const ch = interaction.guild.channels.cache.get(panel.channelId);
         if (ch) {
           const msg = await ch.messages.fetch(msgId).catch(() => null);
@@ -158,7 +158,7 @@ module.exports = {
       if (imageAttachment) panel.image = imageAttachment.url;
       if (clearImage) delete panel.image;
 
-      rr.setPanel(targetId, panel);
+      await rr.setPanel(targetId, panel);
       const ch = interaction.guild.channels.cache.get(panel.channelId);
       if (ch) {
         const msg = await ch.messages.fetch(targetId).catch(() => null);
@@ -177,7 +177,7 @@ module.exports = {
         const msg = await ch.messages.fetch(targetId).catch(() => null);
         if (msg) await msg.delete().catch(() => {});
       }
-      rr.deletePanel(targetId);
+      await rr.deletePanel(targetId);
       return interaction.reply({ content: 'panel deleted', ephemeral: true });
     }
 
@@ -187,7 +187,7 @@ module.exports = {
     if (!(await isMod(message.member))) return noPermPrefix(message);
 
     const sub = (args[0] || '').toLowerCase();
-    const all = rr.getAll();
+    const all = await rr.getAll();
 
     if (sub === 'panel' || sub === 'create') {
       const title = args.slice(1).join(' ') || 'Roles';
@@ -198,7 +198,7 @@ module.exports = {
       const rows = buildRows(data, 'temp');
       const msg = await message.channel.send({ embeds: [embed], components: rows });
       data.channelId = msg.channel.id;
-      rr.setPanel(msg.id, data);
+      await rr.setPanel(msg.id, data);
       const realRows = buildRows(data, msg.id);
       await msg.edit({ components: realRows }).catch(() => {});
       await message.delete().catch(() => {});
@@ -233,7 +233,7 @@ module.exports = {
         }
         const attach = message.attachments.first();
         if (attach) panel.image = attach.url;
-        rr.setPanel(msgId, panel);
+        await rr.setPanel(msgId, panel);
         const ch = message.guild.channels.cache.get(panel.channelId);
         if (ch) {
           const msg = await ch.messages.fetch(msgId).catch(() => null);
@@ -254,7 +254,7 @@ module.exports = {
         if (targetId && msgId !== targetId) continue;
         if (!panel.roles[emoji]) continue;
         delete panel.roles[emoji];
-        rr.setPanel(msgId, panel);
+        await rr.setPanel(msgId, panel);
         const ch = message.guild.channels.cache.get(panel.channelId);
         if (ch) {
           const msg = await ch.messages.fetch(msgId).catch(() => null);
@@ -272,7 +272,7 @@ module.exports = {
         if (panel.guildId !== message.guild.id) continue;
         if (targetId && msgId !== targetId) continue;
         panel.color = color;
-        rr.setPanel(msgId, panel);
+        await rr.setPanel(msgId, panel);
         const ch = message.guild.channels.cache.get(panel.channelId);
         if (ch) {
           const msg = await ch.messages.fetch(msgId).catch(() => null);
@@ -300,7 +300,7 @@ module.exports = {
       if (attach) panel.image = attach.url;
       if (args.includes('--remove-image')) delete panel.image;
 
-      rr.setPanel(targetId, panel);
+      await rr.setPanel(targetId, panel);
       const ch = message.guild.channels.cache.get(panel.channelId);
       if (ch) {
         const msg = await ch.messages.fetch(targetId).catch(() => null);
@@ -319,7 +319,7 @@ module.exports = {
         const msg = await ch.messages.fetch(targetId).catch(() => null);
         if (msg) await msg.delete().catch(() => {});
       }
-      rr.deletePanel(targetId);
+      await rr.deletePanel(targetId);
       return message.reply('panel deleted');
     }
 
