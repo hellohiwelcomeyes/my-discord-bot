@@ -12,9 +12,11 @@ function buildEmbed(panel) {
     desc += '‧₊ ⊹ _no roles yet_ ⊹ ₊‧';
   }
   desc += '\n\n**Click to assign**';
-  return new EmbedBuilder()
+  const embed = new EmbedBuilder()
     .setColor(parseInt(panel.color || 'FFCBF6', 16))
     .setDescription(desc);
+  if (panel.image) embed.setImage(panel.image);
+  return embed;
 }
 
 function buildRows(panel, msgId) {
@@ -47,7 +49,8 @@ module.exports = {
     .addSubcommand(s => s.setName('remove').setDescription('Remove a role option').addStringOption(o => o.setName('emoji').setDescription('Emoji').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('color').setDescription('Set panel color').addStringOption(o => o.setName('hex').setDescription('Hex color').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false)))
     .addSubcommand(s => s.setName('list').setDescription('List all panels'))
-    .addSubcommand(s => s.setName('delete').setDescription('Delete a role panel').addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(true))),
+    .addSubcommand(s => s.setName('delete').setDescription('Delete a role panel').addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(true)))
+    .addSubcommand(s => s.setName('image').setDescription('Set panel image or gif').addStringOption(o => o.setName('url').setDescription('Image/gif URL').setRequired(true)).addStringOption(o => o.setName('panel').setDescription('Panel ID').setRequired(false))),
 
   async execute(interaction) {
     if (!(await isMod(interaction.member))) return noPermSlash(interaction);
@@ -149,6 +152,23 @@ module.exports = {
       }
       rr.deletePanel(targetId);
       return interaction.reply({ content: 'panel deleted', ephemeral: true });
+    }
+
+    if (sub === 'image') {
+      const url = interaction.options.getString('url');
+      const targetId = interaction.options.getString('panel');
+      for (const [msgId, panel] of Object.entries(all)) {
+        if (panel.guildId !== interaction.guild.id) continue;
+        if (targetId && msgId !== targetId) continue;
+        panel.image = url;
+        rr.setPanel(msgId, panel);
+        const ch = interaction.guild.channels.cache.get(panel.channelId);
+        if (ch) {
+          const msg = await ch.messages.fetch(msgId).catch(() => null);
+          if (msg) msg.edit({ embeds: [buildEmbed(panel)] }).catch(() => {});
+        }
+      }
+      return interaction.reply({ content: 'image set', ephemeral: true });
     }
   },
 
@@ -253,11 +273,30 @@ module.exports = {
       return message.reply('panel deleted');
     }
 
+    if (sub === 'image') {
+      const url = args[1];
+      if (!url) return message.reply('usage: `!areactionrole image <url> [panel_id]`');
+      const targetId = args[2] || null;
+      for (const [msgId, panel] of Object.entries(all)) {
+        if (panel.guildId !== message.guild.id) continue;
+        if (targetId && msgId !== targetId) continue;
+        panel.image = url;
+        rr.setPanel(msgId, panel);
+        const ch = message.guild.channels.cache.get(panel.channelId);
+        if (ch) {
+          const msg = await ch.messages.fetch(msgId).catch(() => null);
+          if (msg) msg.edit({ embeds: [buildEmbed(panel)] }).catch(() => {});
+        }
+      }
+      return message.reply('image set');
+    }
+
     message.reply(
       '`!areactionrole panel <title>` — create button panel\n' +
       '`!areactionrole add :emoji: @role [panel_id]` — add role\n' +
       '`!areactionrole remove :emoji: [panel_id]` — remove role\n' +
       '`!areactionrole color <hex> [panel_id]` — set color\n' +
+      '`!areactionrole image <url> [panel_id]` — set image/gif\n' +
       '`!areactionrole delete <panel_id>` — delete panel\n' +
       '`!areactionrole list` — list panels'
     );
