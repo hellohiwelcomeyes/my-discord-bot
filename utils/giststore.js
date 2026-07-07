@@ -12,6 +12,7 @@ function init() {
     return false;
   }
   octokit = new Octokit({ auth: token });
+  console.log('Gist store initialized');
   return true;
 }
 
@@ -23,10 +24,14 @@ async function load() {
       if (gist.files[GIST_ID]) {
         gistId = gist.id;
         const content = gist.files[GIST_ID].content;
+        console.log(`✅ Loaded panel data from gist (${gistId})`);
         return JSON.parse(content);
       }
     }
-  } catch {}
+    console.log('Gist not found — will create on first save');
+  } catch (err) {
+    console.error('Failed to load gist:', err?.message || err);
+  }
   return null;
 }
 
@@ -45,6 +50,7 @@ async function save(data) {
         files: { [GIST_ID]: { content } },
       });
       gistId = gist.id;
+      console.log(`✅ Created panel gist (${gistId})`);
     }
   } catch (err) {
     console.error('Failed to save to gist:', err.message);
