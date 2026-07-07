@@ -7,6 +7,9 @@ const { prefix } = require('./config');
 const http = require('http');
 http.createServer((req, res) => res.end('ok')).listen(process.env.PORT || 3000);
 
+const gist = require('./utils/giststore');
+gist.init();
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -68,9 +71,6 @@ client.on('messageCreate', async message => {
     message.reply('❌ Something went wrong running that command.');
   }
 });
-
-const gist = require('./utils/giststore');
-gist.init();
 
 const logger = require('./utils/logger');
 logger.init(client);
