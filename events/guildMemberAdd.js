@@ -52,6 +52,7 @@ module.exports = {
         'ɢᴇᴛ ᴄᴏᴍꜰᴏʀᴛᴀʙʟᴇ!\n\n' +
         '────── ෆ˚⋆୨୧⋆˚ෆ ──────'
       )
+      .setImage('https://media.discordapp.net/attachments/1515420062461329420/1524497582108442624/3ED022D9-DFCA-46E8-9C43-AAC2BF35A739.gif')
       .setTimestamp();
 
     channel.send({ embeds: [embed] }).catch(() => {});

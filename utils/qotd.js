@@ -142,21 +142,34 @@ async function postQOTD(client) {
       question +
       '\n\n‧₊ ⊹ ༺ answer away ༻ ⊹ ₊‧'
     )
+    .setImage('https://media.discordapp.net/attachments/1515420062461329420/1524497582666027028/C8CAD1F0-E767-4AE0-89E6-6B067D7EB0D0.gif')
     .setFooter({ text: '𓇢𓆸 daily 𓆸𓇢' })
     .setTimestamp();
 
   await channel.send({ embeds: [embed] }).catch(() => {});
 }
 
+function getMinutesUntil(hours, minutes) {
+  const now = new Date();
+  const target = new Date(now);
+  target.setUTCHours(hours, minutes, 0, 0);
+  if (target <= now) target.setUTCDate(target.getUTCDate() + 1);
+  return target - now;
+}
+
 function init(client) {
-  lastDate = getTodayStr();
-  setInterval(async () => {
-    const today = getTodayStr();
-    if (today !== lastDate) {
-      lastDate = today;
-      await postQOTD(client);
-    }
-  }, 60 * 60 * 1000);
+  const postAt = () => {
+    postQOTD(client);
+  };
+
+  const ms = getMinutesUntil(8, 0); // 8 AM UTC = 10 AM CEST
+  setTimeout(() => {
+    postAt();
+    setInterval(postAt, 24 * 60 * 60 * 1000);
+  }, ms);
+
+  const firstPostTime = new Date(Date.now() + ms);
+  console.log(`QOTD scheduled daily at 10 AM Europe (posted at 8 AM UTC) — first post ${firstPostTime.toLocaleString('en-GB', { timeZone: 'Europe/Berlin' })} (${Math.round(ms / 60000)} min from now)`);
 }
 
 module.exports = { init };

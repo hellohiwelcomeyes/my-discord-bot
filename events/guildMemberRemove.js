@@ -41,6 +41,7 @@ module.exports = {
         `${member.guild.memberCount} ᴍᴇᴍʙᴇʀꜱ ʀᴇᴍᴀɪɴ\n\n` +
         '────── ⋅˚₊‧୨୧‧₊˚⋅ ──────'
       )
+      .setImage('https://media.discordapp.net/attachments/1515420062461329420/1524497582108442624/3ED022D9-DFCA-46E8-9C43-AAC2BF35A739.gif')
       .addFields(
         { name: 'ᴛɪᴍᴇ ʜᴇʀᴇ', value: `${duration}d`, inline: true },
         { name: 'ᴊᴏɪɴᴇᴅ', value: member.joinedTimestamp ? `<t:${Math.floor(member.joinedTimestamp / 1000)}:R>` : 'Unknown', inline: true },
