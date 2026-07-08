@@ -4,9 +4,11 @@ const logger = require('../utils/logger');
 const greetings = ['hello', 'hi', 'hey', 'sup', 'yo', 'wassup', 'whats up', 'howdy', 'hii', 'heyy', 'good morning', 'good evening', 'morning'];
 
 const insults = [
-  'fuck you', 'suck', 'dumb', 'stupid', 'trash', 'bad bot', 'ugly',
-  'die', 'kill yourself', 'cringe', 'shit bot', 'useless', 'stfu',
-  'shut up', 'nobody asked', 'worst bot',
+  'fuck', 'suck', 'dumb', 'stupid', 'trash', 'ugly', 'die', 'cringe',
+  'useless', 'stfu', 'shut up', 'hate', 'worst', 'kill yourself',
+  'nobody asked', 'bad bot', 'shitbot', 'shit bot', 'annoying',
+  'dislike', 'terrible', 'awful', 'horrible', 'pathetic', 'lame',
+  'garbage', 'wack', 'kys', 'stink',
 ];
 
 const greetReplies = [
